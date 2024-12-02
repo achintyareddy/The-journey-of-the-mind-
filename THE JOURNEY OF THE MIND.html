@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mindfulness & Meditation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Mindfulness & Meditation</h1>
+      <button id="dark-mode-toggle">Toggle Dark Mode</button>
+    </header>
+    <div class="profile">
+      <label for="username">Username:</label>
+      <input type="text" id="username">
+      <button onclick="saveProfile()">Save Profile</button>
+      <p id="greeting"></p>
+    </div>
+    <div class="timer">
+      <label for="meditation-time">Select Meditation Time (minutes):</label>
+      <select id="meditation-time">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="30">30</option>
+      </select>
+      <button onclick="startMeditation()">Start Meditation</button>
+    </div>
+    <div id="meditation-video" class="hidden">
+      <video controls>
+        <source src="buddha-teachings.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <audio id="guided-audio" controls class="hidden">
+        <source src="guided-meditation.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+    <div id="background-music" class="hidden">
+      <label for="music-selection">Choose Background Music:</label>
+      <select id="music-selection">
+        <option value="nature-sounds.mp3">Nature Sounds</option>
+        <option value="calm-waves.mp3">Calm Waves</option>
+        <option value="soft-chimes.mp3">Soft Chimes</option>
+      </select>
+      <audio id="background-audio" controls class="hidden">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+    <div id="quotes" class="hidden">
+      <p id="quote-text"></p>
+    </div>
+    <div id="progress">
+      <h2>Progress Tracker</h2>
+      <p id="progress-text"></p>
+    </div>
+    <div id="achievements" class="hidden">
+      <h2>Achievements</h2>
+      <ul id="achievements-list"></ul>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  body.dark-mode {
+    background-color: #333;
+    color: #f2f2f2;
+  }
+  
+  .container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  body.dark-mode .container {
+    background-color: #444;
+    color: #fff;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .timer {
+    margin-bottom: 20px;
+  }
+  
+  .profile {
+    margin-bottom: 20px;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  header h1 {
+    margin: 0;
+  }
+  
+  #quotes {
+    font-style: italic;
+    margin-top: 20px;
+  }
+  
+  #progress {
+    margin-top: 20px;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+  });
+  
+  function saveProfile() {
+    const username = document.getElementById('username').value;
+    if (username) {
+      localStorage.setItem('username', username);
+      document.getElementById('greeting').innerText = `Welcome, ${username}!`;
+    } else {
+      alert('Please enter a valid username.');
+    }
+  }
+  
+  function startMeditation() {
+    const time = document.getElementById('meditation-time').value;
+    if (time) {
+      alert(`Your meditation will start for ${time} minutes.`);
+      document.getElementById('meditation-video').classList.remove('hidden');
+      document.getElementById('guided-audio').classList.remove('hidden');
+      document.getElementById('background-music').classList.remove('hidden');
+      document.getElementById('quotes').classList.remove('hidden');
+      document.getElementById('achievements').classList.remove('hidden');
+      playBackgroundMusic();
+      displayQuote();
+      trackProgress(time);
+      showAchievements();
+    } else {
+      alert('Please select a valid meditation time.');
+    }
+  }
+  
+  function playBackgroundMusic() {
+    const musicSelection = document.getElementById('music-selection').value;
+    const audioElement = document.getElementById('background-audio');
+    audioElement.src = musicSelection;
+    audioElement.classList.remove('hidden');
+    audioElement.play();
+  }
+  
+  function displayQuote() {
+    const quotes = [
+      "The mind is everything. What you think you become.",
+      "Peace comes from within. Do not seek it without.",
+      "The only real failure in life is not to be true to the best one knows.",
+      "The way is not in the sky. The way is in the heart.",
+      "You, yourself, as much as anybody in the entire universe, deserve your love and affection."
+    ];
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    document.getElementById('quote-text').innerText = quotes[randomIndex];
+  }
+  
+  function trackProgress(time) {
+    const currentProgress = localStorage.getItem('meditation-progress') || 0;
+    const newProgress = parseInt(currentProgress) + parseInt(time);
+    localStorage.setItem('meditation-progress', newProgress);
+    document.getElementById('progress-text').innerText = `Total Meditation Time: ${newProgress} minutes`;
+  }
+  
+  function showAchievements() {
+    const achievementsList = document.getElementById('achievements-list');
+    const progress = localStorage.getItem('meditation-progress');
+    achievementsList.innerHTML = '';
+  
+    if (progress >= 50) {
+      const achievement = document.createElement('li');
+      achievement.innerText = '50 Minutes of Meditation!';
+      achievementsList.appendChild(achievement);
+    }
+  
+    if (progress >= 100) {
+      const achievement = document.createElement('li');
+      achievement.innerText = '100 Minutes of Meditation!';
+      achievementsList.appendChild(achievement);
+    }
+  
+    if (progress >= 200) {
+      const achievement = document.createElement('li');
+      achievement.innerText = '200 Minutes of Meditation!';
+      achievementsList.appendChild(achievement);
+    }
+  }
+  
+  // Load saved username if available
+  window.onload = function() {
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+      document.getElementById('greeting').innerText = `Welcome, ${savedUsername}!`;
+    }
+  }
+    
